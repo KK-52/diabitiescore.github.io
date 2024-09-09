@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Risk Prediction</title>
+    <style>
+        /* Styling remains unchanged */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Diabetes Risk Prediction</h1>
+        <form id="diabetes-form">
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+
+            <label for="medical_reports">Upload Medical Reports:</label>
+            <input type="file" id="medical_reports" name="file" accept="image/*,application/pdf" required>
+            <div id="file-preview" class="file-list"></div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('diabetes-form').addEventListener('submit', predict() {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            // Send form data to Flask backend
+            fetch('http://172.16.23.25:5000/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => launch.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                } else {
+                    alert("Prediction: " + data.result);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('medical_reports').addEventListener('change', function(event) {
+            const filePreview = document.getElementById('file-preview');
+            filePreview.innerHTML = '';  // Clear previews
+            const files = event.target.files;
+
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const fileUrl = URL.createObjectURL(file);
+
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = fileUrl;
+                        img.onload = () => URL.revokeObjectURL(fileUrl);
+                        filePreview.appendChild(img);
+                    } else if (file.type === 'application/pdf') {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = fileUrl;
+                        iframe.title = file.name;
+                        filePreview.appendChild(iframe);
+                    }
+                }
+            } else {
+                filePreview.innerHTML = 'No files selected';
+            }
+        });
+    </script>
+</body>
+</html>
+
+
