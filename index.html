@@ -30,8 +30,9 @@
     </div>
 
     <script>
-        document.getElementById('diabetes-form').addEventListener('submit', predict() {
-            event.preventDefault();
+        // Handle form submission
+        document.getElementById('diabetes-form').addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent form from submitting normally
             const formData = new FormData(event.target);
 
             // Send form data to Flask backend
@@ -39,7 +40,7 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => launch.json())
+            .then(response => response.json())  // Corrected from 'launch.json()' to 'response.json()'
             .then(data => {
                 if (data.error) {
                     alert("Error: " + data.error);
@@ -52,9 +53,10 @@
             });
         });
 
+        // Handle file selection and display a preview
         document.getElementById('medical_reports').addEventListener('change', function(event) {
             const filePreview = document.getElementById('file-preview');
-            filePreview.innerHTML = '';  // Clear previews
+            filePreview.innerHTML = '';  // Clear previous previews
             const files = event.target.files;
 
             if (files.length > 0) {
